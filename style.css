@@ -1,3 +1,8 @@
+* {
+  margin: 0;
+  padding: 0; 
+}
+
 :root {
     --base-color: #f6f9fc;
     --base-variant: #e8e9ed;
@@ -79,5 +84,15 @@
             box-shadow: inset 0px 0px 5px #444444;
      outline: none;
 }
-
 /*THEME SWITCH ENDS*/
+
+body {
+  background-color: var(--base-color);
+}
+
+.intro {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2rem;
+  color: var(--text-color);
+}
+

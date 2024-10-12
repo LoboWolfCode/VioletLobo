@@ -96,3 +96,49 @@ body {
   color: var(--text-color);
 }
 
+body {
+  background: url(images/art_5.jpg) repeat;
+  background-size: 35%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*Footer*/
+.fa-x-twitter {
+  color: var(--text-color);
+}
+
+.fa-instagram {
+  color: var(--text-color);
+}
+
+.fa-linkedin-in {
+  color: var(--text-color);
+}
+
+.fa-envelope {
+  color: var(--text-color);
+}
+
+.vio-and {
+  color: var(--text-color);
+}

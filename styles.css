@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'WhyMin';
+    src: url('fonts/WhyMin.ttf') format('truetype');
+  }
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -6,7 +11,7 @@
   
   body {
     display: flex;
-    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family:'WhyMin', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     overflow-x: hidden;
     background-color: #e195e65c;
   }

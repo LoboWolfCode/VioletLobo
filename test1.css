@@ -7,6 +7,10 @@
 	box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 :root {
     --bg-color: #F4D8F5;
     --img-div: #E195E6;

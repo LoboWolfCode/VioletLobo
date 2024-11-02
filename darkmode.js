@@ -41,3 +41,12 @@ readMoreBtns.forEach(btn => {
     btn.textContent = isExpanded ? 'Read Less' : 'Read More';
   });
 });
+
+
+
+
+
+lightbox.option({
+    'resizeDuration': 200,
+    'wrapAround': true
+  })

@@ -17,3 +17,27 @@ themeSwitch.addEventListener("click", () => {
     darkmode = localStorage.getItem('darkmode')
     darkmode !== "active" ? enableDarkmode() : disableDarkmode()
 })
+
+
+
+
+const readMoreBtns = document.querySelectorAll('.read-more-btn');
+
+
+readMoreBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const paragraph = btn.previousElementSibling;
+
+
+    // Close all other expanded paragraphs
+    readMoreBtns.forEach(otherBtn => {
+      if (otherBtn !== btn) {
+        otherBtn.previousElementSibling.classList.remove('expanded');
+      }
+    });
+
+
+    const isExpanded = paragraph.classList.toggle('expanded');
+    btn.textContent = isExpanded ? 'Read Less' : 'Read More';
+  });
+});

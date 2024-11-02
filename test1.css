@@ -237,6 +237,7 @@ article {
   background-color: transparent;
   color: var(--read-more-text-color);
   padding: 0;
+  cursor: pointer;
 }
 /*Read More ENDS*/
 

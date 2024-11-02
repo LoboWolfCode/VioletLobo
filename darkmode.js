@@ -21,11 +21,6 @@ themeSwitch.addEventListener("click", () => {
 
 
 
-const readMoreBtns = document.querySelectorAll('.read-more-btn');
-
-
-let currentExpandedBtn = null;
-
 document.addEventListener('DOMContentLoaded', () => {
   const readMoreBtns = document.querySelectorAll('.read-more-btn');
 

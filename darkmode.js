@@ -21,41 +21,22 @@ themeSwitch.addEventListener("click", () => {
 
 
 
-document.addEventListener('DOMContentLoaded', () => {
-  const readMoreBtns = document.querySelectorAll('.read-more-btn');
+const readMoreBtns = document.querySelectorAll('.read-more-btn');
 
-  let currentExpandedBtn = null;
+readMoreBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const paragraph = btn.previousElementSibling;
 
-  readMoreBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const paragraph = btn.previousElementSibling;
-
-      // Close all other expanded paragraphs
-      readMoreBtns.forEach(otherBtn => {
-        if (otherBtn !== btn) {
-          otherBtn.previousElementSibling.classList.remove('expanded');
-          otherBtn.textContent = 'Read More';
-        }
-      });
-
-      // Update the current expanded button
-      if (currentExpandedBtn && currentExpandedBtn !== btn) {
-        currentExpandedBtn.textContent = 'Read More';
+    // Close all other expanded paragraphs and reset their buttons
+    readMoreBtns.forEach(otherBtn => {
+      if (otherBtn !== btn) {
+        otherBtn.previousElementSibling.classList.remove('expanded');
+        otherBtn.textContent = 'Read More'; // Reset text
       }
-      currentExpandedBtn = btn;
-
-      const isExpanded = paragraph.classList.toggle('expanded');
-      btn.textContent = isExpanded ? 'Read Less' : 'Read More';
     });
+
+    // Toggle the current paragraph
+    const isExpanded = paragraph.classList.toggle('expanded');
+    btn.textContent = isExpanded ? 'Read Less' : 'Read More';
   });
 });
-
-
-
-
-
-
-lightbox.option({
-    'resizeDuration': 200,
-    'wrapAround': true
-  })

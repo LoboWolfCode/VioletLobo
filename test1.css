@@ -344,6 +344,20 @@ footer {
   margin-right: 50px;
 }
 
+.cv {
+  color: var(--footer-sign);
+  text-decoration: none;
+  font-size: 1rem;
+  line-height: 1.5em;
+  font-family: Camphor, Open Sans, Segoe UI, sans-serif;
+  text-align: center;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .social-media {
   padding: 10px;
   text-align: center;

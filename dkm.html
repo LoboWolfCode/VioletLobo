@@ -1,1 +1,95 @@
-<h1>DKM VIOMUFFIN &#128514;</h1>
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DKM — Violet Lobo</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="images/vl_logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Inter:wght@300..600&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+
+  <script>
+    // Hide-before-reveal is set here so there is no flash, and taken back off
+    // if main.js never boots — otherwise a failed script would leave the page
+    // permanently blank.
+    document.documentElement.classList.add('js');
+    setTimeout(function () {
+      if (!document.documentElement.dataset.booted) {
+        document.documentElement.classList.remove('js');
+      }
+    }, 2500);
+    try {
+      var saved = localStorage.getItem('vl-theme');
+      document.documentElement.dataset.theme = saved
+        || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    } catch (e) { /* storage blocked — the dark default in the markup stands */ }
+  </script>
+
+  <style>
+    .oops {
+      min-height: 100svh;
+      display: grid;
+      place-content: center;
+      justify-items: center;
+      gap: 1.25rem;
+      padding: var(--gutter);
+      text-align: center;
+    }
+    .oops__big {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(3rem, 16vw, 11rem);
+      font-weight: 300;
+      line-height: .85;
+      letter-spacing: -.04em;
+      font-variation-settings: "SOFT" 60, "WONK" 1;
+      color: var(--accent);
+    }
+    .oops__sub { margin: 0; color: var(--fg-dim); max-width: 40ch; }
+    .oops__glow {
+      position: fixed;
+      inset-block-start: 50%;
+      inset-inline-start: 50%;
+      z-index: -1;
+      width: min(110vw, 1100px);
+      aspect-ratio: 1;
+      translate: -50% -50%;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent-deep) 0%, transparent 62%);
+      opacity: .3;
+      filter: blur(90px);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="oops__glow" aria-hidden="true"></div>
+
+  <main class="oops">
+    <p class="hero__eyebrow" style="color: var(--fg-faint)">
+      <span>Contact</span><i aria-hidden="true"></i><span>Sort of</span>
+    </p>
+
+    <h1 class="oops__big">DKM<br>Viomuffin</h1>
+
+    <p class="oops__sub">
+      You found the email link. There is no email here — only this.
+      <!-- TODO(violet): drop a real address in below when you want one, e.g.
+           <a class="btn" href="mailto:you@example.com">Email Violet</a> -->
+    </p>
+
+    <p class="oops__sub" style="font-family: var(--hand); font-size: 2.5rem; color: var(--accent)">
+      &#128514;
+    </p>
+
+    <a class="btn" href="index.html">Back to the gallery</a>
+  </main>
+</body>
+
+</html>

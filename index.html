@@ -1,217 +1,496 @@
 <!DOCTYPE html>
-
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="test1.css">
-    <link rel="icon" href="images\vl_logo.png" type="vl_logo.png"/>
-    <link href="lightbox/lightbox2-dev/dist/css/lightbox.css" rel="stylesheet" />
-    <script type="text/javascript" src="darkmode.js" defer></script>
-    <title>VioletLobo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Violet Lobo — Painter, Animator, Curator</title>
+  <meta name="description" content="Selected paintings and drawings by Violet Lobo — painter, animator and curator.">
+  <meta name="theme-color" content="#0A070C" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#F5F1EC" media="(prefers-color-scheme: light)">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Violet Lobo — Painter, Animator, Curator">
+  <meta property="og:description" content="Selected paintings and drawings by Violet Lobo.">
+  <meta property="og:image" content="images/opt/art_16-full.webp">
+
+  <link rel="icon" href="images/vl_logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Inter:wght@300..600&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- pick the theme before first paint so there is no flash of the wrong one -->
+  <script>
+    // Hide-before-reveal is set here so there is no flash, and taken back off
+    // if main.js never boots — otherwise a failed script would leave the page
+    // permanently blank.
+    document.documentElement.classList.add('js');
+    setTimeout(function () {
+      if (!document.documentElement.dataset.booted) {
+        document.documentElement.classList.remove('js');
+      }
+    }, 2500);
+    try {
+      var saved = localStorage.getItem('vl-theme');
+      document.documentElement.dataset.theme = saved
+        || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    } catch (e) { /* storage blocked — the dark default in the markup stands */ }
+  </script>
+
+  <script src="js/main.js" type="module"></script>
 </head>
 
 <body>
+  <a class="skip" href="#work">Skip to the work</a>
 
-    <div class="sidebar">
-        <a href="#home" class="vertical-text">Violet Lobo</a>
-        <hr size="5" color="#fff">
-        <div class="icon-links">
-            <a target="_blank" href="xidk.html" class="fa-brands fa-x-twitter" style="color: var(--x-icon);font-size: 1.2em"></a>
-            <a target="_blank" href="https://www.instagram.com/violet._.lobo/" class="fab fa-instagram" style="color: var(--ig-icon);font-size: 1.3em"></a>
-            <a target="_blank" href="https://www.linkedin.com/in/violet-lobo-7a345a336?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" class="fa-brands fa-linkedin-in fa-bounce" style="color: var(--in-icon);font-size: 1.2em"></a>
-            <a target="_blank" href="dkm.html" class="fa-regular fa-envelope" style="color: var(--mail-icon);font-size: 1.2em"></a>
-           <hr size="5" color="#fff">
-            <button id="theme-switch">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Z"/></svg>
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-280q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Z"/></svg>
-                </button>
+  <!-- fixed atmosphere layers -->
+  <div class="grain" aria-hidden="true"></div>
+  <div class="scroll-rail" aria-hidden="true"><span class="scroll-rail__fill"></span></div>
+
+  <header class="topbar" id="topbar">
+    <a class="topbar__mark" href="#top">
+      <span class="topbar__initials" aria-hidden="true">VL</span>
+      <span class="topbar__name">Violet Lobo</span>
+    </a>
+
+    <nav class="topbar__nav" aria-label="Primary">
+      <a href="#work">Work</a>
+      <a href="#about">About</a>
+      <a href="cv/Violet Lobo CV_2025.pdf" target="_blank" rel="noopener">CV<span class="ext" aria-hidden="true">↗</span></a>
+    </nav>
+
+    <button class="tswitch" id="theme-switch" type="button" aria-pressed="true" aria-label="Switch to light theme">
+      <svg class="tswitch__icon tswitch__icon--moon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 13.2A8.6 8.6 0 0 1 10.8 3a9 9 0 1 0 10.2 10.2Z" />
+      </svg>
+      <svg class="tswitch__icon tswitch__icon--sun" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.4" />
+        <path d="M12 1.6v3M12 19.4v3M1.6 12h3M19.4 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M19.4 4.6l-2.1 2.1M6.7 17.3l-2.1 2.1" />
+      </svg>
+    </button>
+  </header>
+
+  <main id="top">
+
+    <!-- ─────────────────────────  HERO  ───────────────────────── -->
+    <section class="hero">
+      <div class="hero__aura" aria-hidden="true"></div>
+
+      <div class="hero__inner">
+        <p class="hero__eyebrow reveal">
+          <span>Painter</span><i aria-hidden="true"></i><span>Animator</span><i aria-hidden="true"></i><span>Curator</span>
+        </p>
+
+        <h1 class="hero__title">
+          <span class="line"><span class="line__in">Violet</span></span>
+          <span class="line"><span class="line__in line__in--wonk">Lobo</span></span>
+          <!-- the paintings themselves show through the letterforms -->
+          <span class="hero__bleed" aria-hidden="true">
+            <span class="line"><span class="line__in">Violet</span></span>
+            <span class="line"><span class="line__in line__in--wonk">Lobo</span></span>
+          </span>
+        </h1>
+
+        <div class="hero__side">
+          <p class="hero__lede reveal">Paint that gets under the skin — eyes that follow you,
+            creatures worth being afraid of, and the occasional dog.</p>
+
+          <a class="cta reveal" href="#work">
+            <span class="cta__label">Enter the gallery</span>
+            <span class="cta__arrow" aria-hidden="true">↓</span>
+          </a>
         </div>
       </div>
 
+      <div class="hero__foot" aria-hidden="true">
+        <span class="hero__count"><b>16</b> works</span>
+        <span class="hero__scroll"><i></i>Scroll</span>
+      </div>
+    </section>
 
+    <!-- ─────────────────────────  WORK  ───────────────────────── -->
+    <section class="work-sec" id="work">
+      <div class="sec-head">
+        <h2 class="sec-head__title reveal">Selected<br><em>Work</em></h2>
 
+        <div class="sec-head__side">
+          <p class="sec-head__note reveal">Acrylic, pastel, ink and pixels. Click any piece to see it whole.</p>
 
-<!-- home section starts  -->
-<section class="home" id="home">
-  <div class="content" id="intro">
-    <h3 class="name">Violet Lobo</h3>
-    <p class="info">Curator, Animator, Artist</p>
-    <a href="#gallery" class="btn69">View Gallery</a>
+          <div class="viewtoggle reveal" role="group" aria-label="Gallery layout">
+            <button type="button" data-view="grid" aria-pressed="true">Grid</button>
+            <button type="button" data-view="index" aria-pressed="false">Index</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery" id="gallery">
+        <!-- gallery:start — generated by tools/build.py; edit works.json, not this block -->
+        <figure class="work" style="--swatch: #a15119" data-index="0"
+                 data-full="images/opt/art_1-full.webp" data-fw="1440" data-fh="1080"
+                 data-title="All Eyes On Me" data-caption="All Eyes On Me represents feelings of social anxiety, characterized by the fear of being judged, scrutinized, or isolated by others.">
+          <button class="work__hit" type="button" aria-label="Open &ldquo;All Eyes On Me&rdquo; full size">
+            <span class="work__frame">
+              <img src="images/opt/art_1-thumb.webp" width="1000" height="750" alt="All Eyes On Me" decoding="async" fetchpriority="high">
+              <span class="work__zoom" aria-hidden="true">View</span>
+            </span>
+          </button>
+          <figcaption class="work__cap">
+            <span class="work__num">01</span>
+            <span class="work__meta">
+              <span class="work__title">All Eyes On Me</span>
+              <span class="work__desc">All Eyes On Me represents feelings of social anxiety, characterized by the fear of being judged, scrutinized, or isolated by others.</span>
+            </span>
+          </figcaption>
+        </figure>
+
+        <figure class="work" style="--swatch: #a5551e" data-index="1"
+                 data-full="images/opt/art_2-full.webp" data-fw="1440" data-fh="1100"
+                 data-title="CR13" data-caption="CR13, an acrylic painting on canvas, aims to highlight the beauty of a creature often feared, demonstrating that even the most intimidating animals can possess inherent beauty.">
+          <button class="work__hit" type="button" aria-label="Open &ldquo;CR13&rdquo; full size">
+            <span class="work__frame">
+              <img src="images/opt/art_2-thumb.webp" width="1000" height="764" alt="CR13" decoding="async" fetchpriority="high">
+              <span class="work__zoom" aria-hidden="true">View</span>
+            </span>
+          </button>
+          <figcaption class="work__cap">
+            <span class="work__num">02</span>
+            <span class="work__meta">
+              <span class="work__title">CR13</span>
+              <span class="work__desc">CR13, an acrylic painting on canvas, aims to highlight the beauty of a creature often feared, demonstrating that even the most intimidating animals can possess inherent beauty.</span>
+            </span>
+          </figcaption>
+        </figure>
+
+        <figure class="work" style="--swatch: #320407" data-index="2"
+                 data-full="images/opt/art_3-full.webp" data-fw="1440" data-fh="1006"
+                 data-title="Last Supper" data-caption="Idk ts was just a vampire drawing there wasn’t anything to it it just looked cool💀">
+          <button class="work__hit" type="button" aria-label="Open &ldquo;Last Supper&rdquo; full size">
+            <span class="work__frame">
+              <img src="images/opt/art_3-thumb.webp" width="1000" height="699" alt="Last Supper" decoding="async">
+              <span class="work__zoom" aria-hidden="true">View</span>
+            </span>
+          </button>
+          <figcaption class="work__cap">
+            <span class="work__num">03</span>
+            <span class="work__meta">
+              <span class="work__title">Last Supper</span>
+              <span class="work__desc">Idk ts was just a vampire drawing there wasn’t anything to it it just looked cool💀</span>
+            </span>
+          </figcaption>
+        </figure>
+
+        <figure class="work" style="--swatch: #aaa295" data-index="3"
+                 data-full="images/opt/art_4-full.webp" data-fw="1080" data-fh="1440"
+                 data-title="Dog" data-caption="Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog">
+          <button class="work__hit" type="button" aria-label="Open &ldquo;Dog&rdquo; full size">
+            <span class="work__frame">
+              <img src="images/opt/art_4-thumb.webp" width="750" height="1000" alt="Dog" decoding="async">
+              <span class="work__zoom" aria-hidden="true">View</span>
+            </span>
+          </button>
+          <figcaption class="work__cap">
+            <span class="work__num">04</span>
+            <span class="work__meta">
+              <span class="work__title">Dog</span>
+              <span class="work__desc">Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog</span>
+            </span>
+          </figcaption>
+        </figure>
+
+        <figure class="work" style="--swatch: #240915" data-index="4"
+                 data-full="images/opt/art_5-full.webp" data-fw="1440" data-fh="960"
+                 data-title="TEJTM" data-caption="Doesn’t that look yummy?">
+          <button class="work__hit" type="button" aria-label="Open &ldquo;TEJTM&rdquo; full size">
+            <span class="work__frame">
+              <img src="images/opt/art_5-thumb.webp" width="1000" height="667" alt="TEJTM" loading="lazy" decoding="async">
+              <span class="work__zoom" aria-hidden="true">View</span>
+            </span>
+          </button>
+          <figcaption class="work__cap">
+            <span class="work__num">05</span>
+            <span class="work__meta">
+              <span class="work__title">TEJTM</span>
+              <span class="work__desc">Doesn’t that look yummy?</span>
+            </span>
+          </figcaption>
+        </figure>
+
+        <figure class="work" style="--swatch: #1b1823" data-index="5"
+                 data-full="images/opt/art_6-full.webp" data-fw="1440" data-fh="1004"
+                 data-title="Gobb’s Adventure" data-caption="I am Gobbsmacked by the places Gobbs went! 😂">
+          <button class="work__hit" type="button" aria-label="Open &ldquo;Gobb’s Adventure&rdquo; full size">
+            <span class="work__frame">
+              <img src="images/opt/art_6-thumb.webp" width="1000" height="697" alt="Gobb’s Adventure" loading="lazy" decoding="async">
+              <span class="work__zoom" aria-hidden="true">View</span>
+            </span>
+          </button>
+          <figcaption class="work__cap">
+            <span class="work__num">06</span>
+            <span class="work__meta">
+              <span class="work__title">Gobb’s Adventure</span>
+              <span class="work__desc">I am Gobbsmacked by the places Gobbs went! 😂</span>
+            </span>
+          </figcaption>
+        </figure>
+
+        <figure class="work" style="--swatch: #60019f" data-index="6"
+                 data-full="images/opt/art_7-full.webp" data-fw="1440" data-fh="1006"
+                 data-title="Venom" data-caption="Finally, vemom.">
+          <button class="work__hit" type="button" aria-label="Open &ldquo;Venom&rdquo; full size">
+            <span class="work__frame">
+              <img src="images/opt/art_7-thumb.webp" width="1000" height="699" alt="Venom" loading="lazy" decoding="async">
+              <span class="work__zoom" aria-hidden="true">View</span>
+            </span>
+          </button>
+          <figcaption class="work__cap">
+            <span class="work__num">07</span>
+            <span class="work__meta">
+              <span class="work__title">Venom</span>
+              <span class="work__desc">Finally, vemom.</span>
+            </span>
+          </figcaption>
+        </figure>
+
+        <figure class="work" style="--swatch: #12091d" data-index="7"
+                 data-full="images/opt/art_8-full.webp" data-fw="1440" data-fh="1006"
+                 data-title="Jinx" data-caption="LOL">
+          <button class="work__hit" type="button" aria-label="Open &ldquo;Jinx&rdquo; full size">
+            <span class="work__frame">
+              <img src="images/opt/art_8-thumb.webp" width="1000" height="699" alt="Jinx" loading="lazy" decoding="async">
+              <span class="work__zoom" aria-hidden="true">View</span>
+            </span>
+          </button>
+          <figcaption class="work__cap">
+            <span class="work__num">08</span>
+            <span class="work__meta">
+              <span class="work__title">Jinx</span>
+              <span class="work__desc">LOL</span>
+            </span>
+          </figcaption>
+        </figure>
+
+        <figure class="work" style="--swatch: #5f2326" data-index="8"
+                 data-full="images/opt/art_9-full.webp" data-fw="1440" data-fh="1006"
+                 data-title="Star" data-caption="Dr. Seuse where art thou noose?">
+          <button class="work__hit" type="button" aria-label="Open &ldquo;Star&rdquo; full size">
+            <span class="work__frame">
+              <img src="images/opt/art_9-thumb.webp" width="1000" height="699" alt="Star" loading="lazy" decoding="async">
+              <span class="work__zoom" aria-hidden="true">View</span>
+            </span>
+          </button>
+          <figcaption class="work__cap">
+            <span class="work__num">09</span>
+            <span class="work__meta">
+              <span class="work__title">Star</span>
+              <span class="work__desc">Dr. Seuse where art thou noose?</span>
+            </span>
+          </figcaption>
+        </figure>
+
+        <figure class="work" style="--swatch: #565f64" data-index="9"
+                 data-full="images/opt/art_10-full.webp" data-fw="1014" data-fh="787"
+                 data-title="I Have No Idea" data-caption="SNAKESSSSSSSSS">
+          <button class="work__hit" type="button" aria-label="Open &ldquo;I Have No Idea&rdquo; full size">
+            <span class="work__frame">
+              <img src="images/opt/art_10-thumb.webp" width="1000" height="776" alt="I Have No Idea" loading="lazy" decoding="async">
+              <span class="work__zoom" aria-hidden="true">View</span>
+            </span>
+          </button>
+          <figcaption class="work__cap">
+            <span class="work__num">10</span>
+            <span class="work__meta">
+              <span class="work__title">I Have No Idea</span>
+              <span class="work__desc">SNAKESSSSSSSSS</span>
+            </span>
+          </figcaption>
+        </figure>
+
+        <figure class="work" style="--swatch: #8e556e" data-index="10"
+                 data-full="images/opt/art_11-full.webp" data-fw="1440" data-fh="1006"
+                 data-title="G.O.A.T" data-caption="G.O.A.T, a digital drawing, is a tribute to my mother, the greatest of all time.">
+          <button class="work__hit" type="button" aria-label="Open &ldquo;G.O.A.T&rdquo; full size">
+            <span class="work__frame">
+              <img src="images/opt/art_11-thumb.webp" width="1000" height="699" alt="G.O.A.T" loading="lazy" decoding="async">
+              <span class="work__zoom" aria-hidden="true">View</span>
+            </span>
+          </button>
+          <figcaption class="work__cap">
+            <span class="work__num">11</span>
+            <span class="work__meta">
+              <span class="work__title">G.O.A.T</span>
+              <span class="work__desc">G.O.A.T, a digital drawing, is a tribute to my mother, the greatest of all time.</span>
+            </span>
+          </figcaption>
+        </figure>
+
+        <figure class="work" style="--swatch: #e0e1d7" data-index="11"
+                 data-full="images/opt/art_12-full.webp" data-fw="1500" data-fh="2000"
+                 data-title="Untitled (Pastel)" data-caption="Soft pastel on toned paper.">
+          <button class="work__hit" type="button" aria-label="Open &ldquo;Untitled (Pastel)&rdquo; full size">
+            <span class="work__frame">
+              <img src="images/opt/art_12-thumb.webp" width="750" height="1000" alt="Untitled (Pastel)" loading="lazy" decoding="async">
+              <span class="work__zoom" aria-hidden="true">View</span>
+            </span>
+          </button>
+          <figcaption class="work__cap">
+            <span class="work__num">12</span>
+            <span class="work__meta">
+              <span class="work__title">Untitled (Pastel)</span>
+              <span class="work__desc">Soft pastel on toned paper.</span>
+            </span>
+          </figcaption>
+        </figure>
+
+        <figure class="work" style="--swatch: #a49074" data-index="12"
+                 data-full="images/opt/art_13-full.webp" data-fw="1500" data-fh="2000"
+                 data-title="Untitled (Roses)" data-caption="Acrylic on canvas.">
+          <button class="work__hit" type="button" aria-label="Open &ldquo;Untitled (Roses)&rdquo; full size">
+            <span class="work__frame">
+              <img src="images/opt/art_13-thumb.webp" width="750" height="1000" alt="Untitled (Roses)" loading="lazy" decoding="async">
+              <span class="work__zoom" aria-hidden="true">View</span>
+            </span>
+          </button>
+          <figcaption class="work__cap">
+            <span class="work__num">13</span>
+            <span class="work__meta">
+              <span class="work__title">Untitled (Roses)</span>
+              <span class="work__desc">Acrylic on canvas.</span>
+            </span>
+          </figcaption>
+        </figure>
+
+        <figure class="work" style="--swatch: #655e53" data-index="13"
+                 data-full="images/opt/art_14-full.webp" data-fw="1500" data-fh="2000"
+                 data-title="Haze" data-caption="Haze represents Haze">
+          <button class="work__hit" type="button" aria-label="Open &ldquo;Haze&rdquo; full size">
+            <span class="work__frame">
+              <img src="images/opt/art_14-thumb.webp" width="750" height="1000" alt="Haze" loading="lazy" decoding="async">
+              <span class="work__zoom" aria-hidden="true">View</span>
+            </span>
+          </button>
+          <figcaption class="work__cap">
+            <span class="work__num">14</span>
+            <span class="work__meta">
+              <span class="work__title">Haze</span>
+              <span class="work__desc">Haze represents Haze</span>
+            </span>
+          </figcaption>
+        </figure>
+
+        <figure class="work" style="--swatch: #ac6f53" data-index="14"
+                 data-full="images/opt/art_15-full.webp" data-fw="2000" data-fh="1506"
+                 data-title="Boba" data-caption="Boba represents Boba">
+          <button class="work__hit" type="button" aria-label="Open &ldquo;Boba&rdquo; full size">
+            <span class="work__frame">
+              <img src="images/opt/art_15-thumb.webp" width="1000" height="753" alt="Boba" loading="lazy" decoding="async">
+              <span class="work__zoom" aria-hidden="true">View</span>
+            </span>
+          </button>
+          <figcaption class="work__cap">
+            <span class="work__num">15</span>
+            <span class="work__meta">
+              <span class="work__title">Boba</span>
+              <span class="work__desc">Boba represents Boba</span>
+            </span>
+          </figcaption>
+        </figure>
+
+        <figure class="work" style="--swatch: #5a1e62" data-index="15"
+                 data-full="images/opt/art_16-full.webp" data-fw="2000" data-fh="1443"
+                 data-title="Myst" data-caption="Myst represents Myst">
+          <button class="work__hit" type="button" aria-label="Open &ldquo;Myst&rdquo; full size">
+            <span class="work__frame">
+              <img src="images/opt/art_16-thumb.webp" width="1000" height="722" alt="Myst" loading="lazy" decoding="async">
+              <span class="work__zoom" aria-hidden="true">View</span>
+            </span>
+          </button>
+          <figcaption class="work__cap">
+            <span class="work__num">16</span>
+            <span class="work__meta">
+              <span class="work__title">Myst</span>
+              <span class="work__desc">Myst represents Myst</span>
+            </span>
+          </figcaption>
+        </figure>
+        <!-- gallery:end -->
+      </div>
+
+      <!-- index view is built from the figures above by js -->
+      <ol class="indexlist" id="indexlist" hidden></ol>
+      <div class="indexpeek" id="indexpeek" aria-hidden="true"><img alt=""></div>
+    </section>
+
+    <!-- ─────────────────────────  ABOUT  ──────────────────────── -->
+    <section class="about" id="about">
+      <div class="about__grid">
+        <h2 class="about__kicker reveal">About</h2>
+
+        <div class="about__body">
+          <!-- TODO(violet): swap this for a bio in your own words whenever you like. -->
+          <p class="reveal">I paint people who are being looked at, and animals that deserve a
+            second look. I work in acrylic, soft pastel, ink and digital — moving between the
+            three depending on how loud the idea is.</p>
+          <p class="reveal">I also animate, and curate work by other people, which is a polite
+            way of saying I have opinions about hanging heights.</p>
+
+          <p class="sig reveal" aria-hidden="true">Violet Lobo</p>
+
+          <div class="about__links reveal">
+            <a class="btn" href="cv/Violet Lobo CV_2025.pdf" target="_blank" rel="noopener">
+              Curriculum Vitae <span aria-hidden="true">↗</span>
+            </a>
+            <a class="btn btn--ghost" href="https://www.instagram.com/violet._.lobo/" target="_blank" rel="noopener">
+              Instagram <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p class="foot__word" aria-hidden="true">Violet&nbsp;Lobo</p>
+
+    <div class="foot__row">
+      <ul class="foot__social">
+        <li><a href="https://www.instagram.com/violet._.lobo/" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a href="https://www.linkedin.com/in/violet-lobo-7a345a336" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="mailto:vlobo097@uottawa.ca">Email</a></li>
+      </ul>
+
+      <p class="foot__fine">
+        <span>&copy; <span id="year">2025</span> Violet Lobo. All rights reserved.</span>
+        <span>Designed by <a href="https://sandrolobo.com/" target="_blank" rel="noopener">Sandro Lobo</a></span>
+      </p>
+    </div>
+  </footer>
+
+  <!-- ─────────────────────────  LIGHTBOX  ─────────────────────── -->
+  <div class="lb" id="lightbox" role="dialog" aria-modal="true" aria-label="Artwork viewer" hidden>
+    <div class="lb__scrim" data-lb-close></div>
+
+    <button class="lb__x" type="button" data-lb-close aria-label="Close viewer">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" /></svg>
+    </button>
+
+    <button class="lb__nav lb__nav--prev" type="button" data-lb-prev aria-label="Previous artwork">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4L7 12l8 8" /></svg>
+    </button>
+    <button class="lb__nav lb__nav--next" type="button" data-lb-next aria-label="Next artwork">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4l8 8-8 8" /></svg>
+    </button>
+
+    <figure class="lb__stage">
+      <div class="lb__imgwrap"><img class="lb__img" id="lb-img" alt=""></div>
+      <figcaption class="lb__cap">
+        <span class="lb__count"><b id="lb-now">1</b> / <span id="lb-total">16</span></span>
+        <h3 class="lb__title" id="lb-title"></h3>
+        <p class="lb__text" id="lb-text"></p>
+      </figcaption>
+    </figure>
   </div>
-</section>
-<!-- home section ends -->
-
-
-
-
-<!-- Gallery STARTS-->
-
-<h3 class="gal-sec" id="gallery">Gallery</h3>
-
-    <main>
-
-        <article>
-          <a href="images\art_1.jpg" data-lightbox="image-1" data-title="All Eyes On Me"><img src="images\art_1.jpg"></a>
-          <h3>All Eyes On Me</h3>
-          <div class="section">
-            <p>All Eyes On Me represents feelings of social anxiety, characterized by the fear of being judged, scrutinized, or isolated by others.</p>
-            <button class="read-more-btn">Read More</button>
-          </div>
-        </article>
-      
-        <article>    
-          <a href="images\art_2.jpg" data-lightbox="image-2" data-title="CR13"><img src="images\art_2.jpg"></a>
-          <h3>CR13</h3>
-          <div class="section">
-            <p>CR13, an acrylic painting on canvas, aims to highlight the beauty of a creature often feared, demonstrating that even the most intimidating animals can possess inherent beauty.</p>
-            <button class="read-more-btn">Read More</button>
-          </div> 
-        </article>
-       
-        <article>
-          <a href="images\art_3.jpg" data-lightbox="image-3" data-title="Last Supper"><img src="images\art_3.jpg"></a>
-          <h3>Last Supper</h3>
-          <div class="section">
-            <p>Idk ts was just a vampire drawing there wasn’t anything to it it just looked cool💀</p>
-            <button class="read-more-btn">Read More</button>
-          </div> 
-        </article>
-        
-        <article>
-          <a href="images\art_4.jpg" data-lightbox="image-4" data-title="Dog"><img src="images\art_4.jpg"></a>
-          <h3>Dog</h3>
-          <div class="section">
-            <p>Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog Dog</p>
-            <button class="read-more-btn">Read More</button>
-          </div>
-        </article>
-       
-        <article>    
-          <a href="images\art_5.jpg" data-lightbox="image-5" data-title="TEJTM"><img src="images\art_5.jpg"></a>
-          <h3>TEJTM</h3>
-          <div class="section">
-            <p>Doesn't that look yummy?</p>
-            <button class="read-more-btn">Read More</button>
-          </div> 
-        </article>
-       
-        <article>
-          <a href="images\art_6.jpg" data-lightbox="image-6" data-title="Gobb's Adventure"><img src="images\art_6.jpg"></a>
-          <h3>Gobb's Adventure</h3>
-          <div class="section">
-            <p>I am Gobbsmacked by the places Gobbs went! 😂</p>
-            <button class="read-more-btn">Read More</button>
-          </div> 
-        </article>
-        
-        <article>
-          <a href="images\art_7.jpg" data-lightbox="image-7" data-title="Venom"><img src="images\art_7.jpg"></a>
-          <h3>Venom</h3>
-          <div class="section">
-            <p>Finally, vemom.</p>
-            <button class="read-more-btn">Read More</button>
-          </div>
-        </article>
-        
-        <article>    
-          <a href="images\art_8.jpg" data-lightbox="image-8" data-title="Jinx"><img src="images\art_8.jpg"></a>
-          <h3>Jinx</h3>
-          <div class="section">
-            <p>LOL</p>
-            <button class="read-more-btn">Read More</button>
-          </div> 
-        </article>
-        
-        <article>
-          <a href="images\art_9.jpg" data-lightbox="image-9" data-title="Star"><img src="images\art_9.jpg"></a>
-          <h3>Star</h3>
-          <div class="section">
-            <p>Dr. Seuse where art thou noose?</p>
-            <button class="read-more-btn">Read More</button>
-          </div> 
-        </article>
-        
-        <article>
-          <a href="images\art_10.jpg" data-lightbox="image-10" data-title="I Have No Idea"><img src="images\art_10.jpg"></a>
-          <h3>I Have No Idea</h3>
-          <div class="section">
-            <p>SNAKESSSSSSSSS</p>
-            <button class="read-more-btn">Read More</button>
-          </div>
-        </article>
-        
-        <article>    
-          <a href="images\art_11.jpg" data-lightbox="image-11" data-title="G.O.A.T"><img src="images\art_11.jpg"></a>
-          <h3>G.O.A.T</h3>
-          <div class="section">
-            <p>G.O.A.T, a digital drawing, is a tribute to my mother, the greatest of all time.</p>
-            <button class="read-more-btn">Read More</button>
-          </div> 
-        </article>
-        
-        <article>
-          <a href="images\art_12.jpg" data-lightbox="image-12" data-title="All Eyes On Me"><img src="images\art_12.jpg"></a>
-          <h3>All Eyes On Me</h3>
-          <div class="section">
-            <p>All Eyes On My represents feelings of social anxiety, characterized by the fear of being judged, scrutinized, or isolated by others.</p>
-            <button class="read-more-btn">Read More</button>
-          </div> 
-        </article>
-        
-        <article>
-          <a href="images\art_13.jpg" data-lightbox="image-13" data-title="All Eyes On Me"><img src="images\art_13.jpg"></a>
-            <h3>All Eyes On Me</h3>
-            <div class="section">
-              <p>All Eyes On My represents feelings of social anxiety, characterized by the fear of being judged, scrutinized, or isolated by others.</p>
-              <button class="read-more-btn">Read More</button>
-            </div> 
-          </article>
-         
-          <article>
-            <a href="images\art_14.jpg" data-lightbox="image-14" data-title="Haze"><img src="images\art_14.jpg"></a>
-            <h3>Haze</h3>
-            <div class="section">
-              <p>Haze represents Haze</p>
-              <button class="read-more-btn">Read More</button>
-            </div> 
-          </article>
-
-          <article>
-            <a href="images\art_15.jpg" data-lightbox="image-15" data-title="Boba"><img src="images\art_15.jpg"></a>
-            <h3>Boba</h3>
-            <div class="section">
-              <p>Boba represents Boba</p>
-              <button class="read-more-btn">Read More</button>
-            </div> 
-          </article>
-
-          <article>
-            <a href="images\art_16.jpg" data-lightbox="image-16" data-title="Myst"><img src="images\art_16.jpg"></a>
-            <h3>Myst</h3>
-            <div class="section">
-              <p>Myst represents Myst</p>
-              <button class="read-more-btn">Read More</button>
-            </div> 
-          </article>
-          
-      </main>
-
-<!-- Gallery ENDS-->
-  <br>
-
-<footer>
-  <a href="cv\Violet Lobo CV_2025.pdf" target="_blank" class="cv">Curriculum Vitae</a>
-  <audio class="audio-play" src="audio\where-is-gary.mp3" controls="true" loop="true" preload="none" autostart="0"></audio>
-  <p class="san-and">Designed by <a class="lobito" target="_blank" href="https://sandrolobo.com/">Sandro Lobo</a></p>
-  <p class="vio-and">&copy; 2024 Violet Lobo | All rights reserved</p>
-</footer>
 </body>
-
-<script src="lightbox/lightbox2-dev/dist/js/lightbox-plus-jquery.js"></script>
 
 </html>

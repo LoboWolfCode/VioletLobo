@@ -26,7 +26,7 @@
   --shadow:     0 24px 60px -20px rgb(0 0 0 / 80%);
   --grain-op:   .045;
   --foot-stroke: rgb(255 255 255 / 30%);
-  --art-lift:   1.34;         /* brightness applied to art inside letterforms */
+  --art-lift:   1.5;         /* brightness applied to art inside letterforms */
 
   /* type */
   --serif: "Fraunces", "Iowan Old Style", Palatino, "Times New Roman", serif;
@@ -364,13 +364,15 @@ a { color: inherit; }
   text-transform: none;
 }
 .hero__title .line { display: block; overflow: hidden; }
-.hero__title .line__in {
+.hero__title .line__in,
+.bleedline {
   display: block;
-  font-variation-settings: "SOFT" 20, "WONK" 0;
+  font-variation-settings: "wght" 300, "SOFT" 20, "WONK" 0;
 }
-.hero__title .line__in--wonk {
+.hero__title .line__in--wonk,
+.bleedline--wonk {
   font-style: normal;
-  font-variation-settings: "SOFT" 60, "WONK" 1;
+  font-variation-settings: "wght" 300, "SOFT" 60, "WONK" 1;
   padding-inline-start: .09em;   /* nudged off-axis, the way a signature sits */
 }
 
@@ -380,37 +382,51 @@ a { color: inherit; }
   pointer-events: none;
   display: none;
 }
+.bleedline { display: block; }
+
 /* only ever shown where the browser can genuinely clip paint to glyphs */
 @supports (-webkit-background-clip: text) or (background-clip: text) {
   .hero__bleed {
     display: block;
-    background-image: var(--art, none);
-    background-size: cover;
-    background-position: 50% 50%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    filter: saturate(1.55) brightness(var(--art-lift)) contrast(1.04);
     opacity: 0;
     /* The two layers sit exactly on top of one another and trade places by
        z-index, never by moving in the DOM — moving a node drops the running
        transition, which is what made the change snap rather than dissolve. */
     transition: opacity 2.4s var(--ease-soft);
-    will-change: opacity;
   }
-  .hero__bleed.is-on {
-    opacity: .9;
-    animation: art-drift 14s var(--ease-soft) forwards;
+
+  /* the clip lives here, on the boxes that hold the glyphs themselves */
+  .bleedline {
+    background-image: var(--art, none);
+    /* deliberately oversized (script works out by how much) so there is always
+       room to pan — see the note in main.js */
+    background-size: var(--art-size, 135%) auto;
+    background-position: 50% 50%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    /* Safari needs the fill colour spelled out — `color` alone leaves the
+       letters painted flat over the artwork */
+    -webkit-text-fill-color: transparent;
+    /* each line crops its own patch of the painting, and some patches are very
+       dark — lift them so the name stays readable whichever piece is showing */
+    filter: saturate(1.35) brightness(var(--art-lift)) contrast(1.02);
   }
+
+  .hero__bleed.is-on { opacity: .84; }
   [data-theme="light"] .hero__bleed.is-on { opacity: .88; }
 
   /* a slow pan, so a painting is never quite still while it holds the name */
   @keyframes art-drift {
-    from { background-position: 44% 44%; }
-    to   { background-position: 56% 56%; }
+    from { background-position: 22% 26%; }
+    to   { background-position: 78% 74%; }
+  }
+  .hero__bleed.is-on .bleedline {
+    animation: art-drift 14s var(--ease-soft) forwards;
   }
   @media (prefers-reduced-motion: reduce) {
-    .hero__bleed.is-on { animation: none; }
+    .hero__bleed.is-on,
+    .hero__bleed.is-on .bleedline { animation: none; }
   }
 }
 
@@ -507,12 +523,12 @@ a { color: inherit; }
   font-size: clamp(2.75rem, 8vw, 6.5rem);
   font-weight: 300;
   line-height: .88;
-  font-variation-settings: "SOFT" 30, "WONK" 0;
+  font-variation-settings: "wght" 300, "SOFT" 30, "WONK" 0;
 }
 .sec-head__title em {
   font-style: normal;
   color: var(--accent);
-  font-variation-settings: "SOFT" 70, "WONK" 1;
+  font-variation-settings: "wght" 300, "SOFT" 70, "WONK" 1;
 }
 
 .sec-head__side { display: grid; gap: 1.5rem; justify-items: start; }
@@ -566,6 +582,16 @@ a { color: inherit; }
   grid-auto-rows: var(--row-unit);
   row-gap: 0;
 }
+
+/* Blink keeps the scroll position pinned to whatever element it decided is the
+   "anchor", and re-adjusts when things around it resize. In a masonry grid
+   whose row spans are assigned from script, that correction can throw the page
+   to the top or the bottom mid-flick. WebKit has no scroll anchoring at all,
+   which is why this only ever showed up on Android. Every figure already
+   reserves its height through the image's width/height attributes, so there is
+   nothing here worth anchoring to. */
+.gallery,
+.gallery .work { overflow-anchor: none; }
 .gallery.is-masonry .work { margin-block-end: var(--row-gap); }
 
 .work { margin: 0; }
@@ -637,7 +663,7 @@ a { color: inherit; }
   font-size: 1.1875rem;
   font-weight: 400;
   letter-spacing: -.015em;
-  font-variation-settings: "opsz" 40, "SOFT" 40, "WONK" 0;
+  font-variation-settings: "opsz" 40, "wght" 400, "SOFT" 40, "WONK" 0;
 }
 .work__desc {
   display: block;
@@ -685,9 +711,9 @@ a { color: inherit; }
   font-weight: 300;
   line-height: 1.1;
   letter-spacing: -.02em;
-  font-variation-settings: "SOFT" 30, "WONK" 0;
+  font-variation-settings: "wght" 300, "SOFT" 30, "WONK" 0;
 }
-.indexrow button:hover .indexrow__title { font-variation-settings: "SOFT" 80, "WONK" 1; }
+.indexrow button:hover .indexrow__title { font-variation-settings: "wght" 300, "SOFT" 80, "WONK" 1; }
 
 .indexrow__note {
   justify-self: end;
@@ -791,7 +817,7 @@ a { color: inherit; }
   letter-spacing: -.05em;
   color: transparent;
   -webkit-text-stroke: 1.25px var(--foot-stroke);
-  font-variation-settings: "SOFT" 40, "WONK" 1;
+  font-variation-settings: "wght" 300, "SOFT" 40, "WONK" 1;
   user-select: none;
 }
 
@@ -895,7 +921,7 @@ a { color: inherit; }
 .lb__title {
   font-size: clamp(1.35rem, 3vw, 2rem);
   font-weight: 300;
-  font-variation-settings: "SOFT" 40, "WONK" 1;
+  font-variation-settings: "wght" 300, "SOFT" 40, "WONK" 1;
 }
 .lb__text { margin: 0; font-size: .875rem; color: var(--fg-dim); line-height: 1.6; }
 

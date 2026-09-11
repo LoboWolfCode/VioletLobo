@@ -86,10 +86,13 @@
         <h1 class="hero__title">
           <span class="line"><span class="line__in">Violet</span></span>
           <span class="line"><span class="line__in line__in--wonk">Lobo</span></span>
-          <!-- the paintings themselves show through the letterforms -->
+          <!-- The paintings themselves show through the letterforms. The clip has
+               to sit on the elements holding the text, not on a wrapper: WebKit
+               will not reach an ancestor's background through a box that has its
+               own overflow clip, which is why Safari showed plain letters. -->
           <span class="hero__bleed" aria-hidden="true">
-            <span class="line"><span class="line__in">Violet</span></span>
-            <span class="line"><span class="line__in line__in--wonk">Lobo</span></span>
+            <span class="bleedline">Violet</span>
+            <span class="bleedline bleedline--wonk">Lobo</span>
           </span>
         </h1>
 

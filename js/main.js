@@ -90,6 +90,29 @@ function initHeroBleed() {
 
   const FADE = 2400;   // must match the opacity transition in the stylesheet
 
+  /**
+   * Size the artwork so it covers the letterforms AND leaves room to pan.
+   *
+   * `background-size: cover` overflows on one axis only — and on a phone the
+   * headline box and the paintings land at nearly the same proportion, so it
+   * overflowed on neither and the drift had nowhere to go. Oversizing by a
+   * fixed margin past cover guarantees travel in both directions at any size.
+   */
+  const PAN_ROOM = 1.35;
+
+  function sizeLayer(layer, work) {
+    if (!work) return;
+    // measure a line, since that is the box each background now fills
+    const line = layer.querySelector('.bleedline');
+    const box = line?.getBoundingClientRect();
+    if (!box?.width || !box?.height) return;
+    const cover = Math.max(100, 100 * (work.w / work.h) / (box.width / box.height));
+    layer.style.setProperty('--art-size', `${(cover * PAN_ROOM).toFixed(1)}%`);
+  }
+
+  // the headline box changes shape on rotate, so the sizing has to follow
+  addEventListener('resize', () => layers.forEach(l => sizeLayer(l, l._work)));
+
   let n = 0;
   const step = () => {
     const w = cast[n % cast.length];
@@ -101,6 +124,8 @@ function initHeroBleed() {
     img.src = w.thumb;
     img.decode().catch(() => {}).then(() => {
       incoming.style.setProperty('--art', `url("${w.thumb}")`);
+      incoming._work = w;
+      sizeLayer(incoming, w);
       incoming.style.zIndex = '2';                 // paint on top of the outgoing
       outgoing.style.zIndex = '1';
 
@@ -118,7 +143,10 @@ function initHeroBleed() {
     });
   };
 
-  step();
+  // The bleed sits in its final position from the start, while the real
+  // headline is still wiping up into place, so hold it back until they line up.
+  setTimeout(step, calm.matches ? 0 : 1200);
+
   // The crossfade is pure opacity and the pan is switched off in the stylesheet
   // under reduced motion, so it can keep going — just more slowly.
   setInterval(step, calm.matches ? 12000 : 8000);
@@ -212,16 +240,21 @@ function layOutMasonry() {
   // unlike the clamp() sitting in the custom property
   const unit = parseFloat(getComputedStyle(gallery).gridAutoRows) || 8;
 
-  // Clear, then measure, then write — three passes. Interleaving a write and a
-  // read per figure forced a fresh layout sixteen times over, long enough to
-  // stall scrolling on a phone.
-  figures.forEach(fig => { fig.style.gridRowEnd = ''; });
-
+  // The figures are `align-items: start`, so each one's height is its own
+  // content height whatever row span it currently carries. That means we can
+  // measure without wiping the spans first — wiping them collapsed the whole
+  // gallery for an instant on every pass, and Chrome's scroll anchoring would
+  // try to correct for it by yanking the page.
   const spans = figures.map(fig => Math.ceil(
     (fig.getBoundingClientRect().height
       + (parseFloat(getComputedStyle(fig).marginBlockEnd) || 0)) / unit));
 
-  figures.forEach((fig, i) => { fig.style.gridRowEnd = `span ${spans[i]}`; });
+  // write only where something actually changed, so an unchanged gallery
+  // costs no style invalidation at all
+  figures.forEach((fig, i) => {
+    const span = `span ${spans[i]}`;
+    if (fig.style.gridRowEnd !== span) fig.style.gridRowEnd = span;
+  });
 }
 
 /* re-measure whenever anything that changes height settles */

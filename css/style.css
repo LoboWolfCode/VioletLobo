@@ -26,7 +26,8 @@
   --shadow:     0 24px 60px -20px rgb(0 0 0 / 80%);
   --grain-op:   .045;
   --foot-stroke: rgb(255 255 255 / 30%);
-  --art-lift:   1.5;         /* brightness applied to art inside letterforms */
+  --art-lift:   1.3;
+  --art-wash:   rgb(244 238 247 / 30%);         /* brightness applied to art inside letterforms */
 
   /* type */
   --serif: "Fraunces", "Iowan Old Style", Palatino, "Times New Roman", serif;
@@ -62,6 +63,7 @@
   --grain-op:   .03;
   --foot-stroke: rgb(23 19 25 / 32%);
   --art-lift:   1;
+  --art-wash:   rgb(23 19 25 / 10%);
 
   color-scheme: light;
 }
@@ -369,6 +371,17 @@ a { color: inherit; }
   display: block;
   font-variation-settings: "wght" 300, "SOFT" 20, "WONK" 0;
 }
+
+/* Once the paintings are actually showing, the real headline goes transparent
+   and the artwork letters carry the name on their own.
+   Two separate copies of the same text cannot be relied on to register
+   glyph-for-glyph on every engine — Safari rasterises text-clipped paint with
+   very slightly different advances, and the error accumulates across the word,
+   so the plain white copy underneath was peeking out as a ghost on iOS. There
+   is no second copy to misalign if only one of them is ever visible.
+   The text stays in the DOM: selectable, and read aloud as normal. */
+.hero__title .line__in { transition: color 1.4s var(--ease-soft); }
+.hero__title.has-bleed .line__in { color: transparent; }
 .hero__title .line__in--wonk,
 .bleedline--wonk {
   font-style: normal;
@@ -397,11 +410,17 @@ a { color: inherit; }
 
   /* the clip lives here, on the boxes that hold the glyphs themselves */
   .bleedline {
-    background-image: var(--art, none);
+    /* A wash sits over the painting, inside the very same element, so the
+       darkest crops still read as letters. This is the lift the plain headline
+       used to give from underneath — done here instead, where it cannot fall
+       out of register with anything. */
+    background-image:
+      linear-gradient(var(--art-wash), var(--art-wash)),
+      var(--art, none);
     /* deliberately oversized (script works out by how much) so there is always
        room to pan — see the note in main.js */
-    background-size: var(--art-size, 135%) auto;
-    background-position: 50% 50%;
+    background-size: auto, var(--art-size, 135%) auto;
+    background-position: 0 0, 50% 50%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -413,13 +432,13 @@ a { color: inherit; }
     filter: saturate(1.35) brightness(var(--art-lift)) contrast(1.02);
   }
 
-  .hero__bleed.is-on { opacity: .84; }
-  [data-theme="light"] .hero__bleed.is-on { opacity: .88; }
+  .hero__bleed.is-on { opacity: 1; }
+  [data-theme="light"] .hero__bleed.is-on { opacity: 1; }
 
   /* a slow pan, so a painting is never quite still while it holds the name */
   @keyframes art-drift {
-    from { background-position: 22% 26%; }
-    to   { background-position: 78% 74%; }
+    from { background-position: 0 0, 22% 26%; }
+    to   { background-position: 0 0, 78% 74%; }
   }
   .hero__bleed.is-on .bleedline {
     animation: art-drift 14s var(--ease-soft) forwards;
@@ -985,7 +1004,7 @@ a { color: inherit; }
 /* headline lines wipe up from their own overflow box on load */
 .js .hero__title .line__in {
   translate: 0 105%;
-  transition: translate 1.1s var(--ease);
+  transition: translate 1.1s var(--ease), color 1.4s var(--ease-soft);
 }
 .js .is-ready .hero__title .line__in { translate: 0 0; }
 .js .is-ready .hero__title .line:nth-child(2) .line__in { transition-delay: .1s; }

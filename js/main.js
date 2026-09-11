@@ -73,6 +73,7 @@ function vividness(hex) {
 function initHeroBleed() {
   const first = $('.hero__bleed');
   const aura = $('.hero__aura');
+  const title = $('.hero__title');
   if (!first) return;
 
   // muddy and near-black paintings would swallow the headline, so only the
@@ -119,10 +120,7 @@ function initHeroBleed() {
     const incoming = layers[n % 2];
     const outgoing = layers[(n + 1) % 2];
 
-    // decode first so the painting is ready to show the instant it fades up
-    const img = new Image();
-    img.src = w.thumb;
-    img.decode().catch(() => {}).then(() => {
+    const show = () => {
       incoming.style.setProperty('--art', `url("${w.thumb}")`);
       incoming._work = w;
       sizeLayer(incoming, w);
@@ -136,11 +134,23 @@ function initHeroBleed() {
 
       aura?.style.setProperty('--aura', w.swatch);
 
+      // only now does the plain headline stand down — if no painting ever
+      // arrives, this never fires and the name simply stays legible
+      title?.classList.add('has-bleed');
+
       // hold the old one underneath until the new one is fully up, then let it
       // fade out beneath — the viewer only ever sees one dissolve
       setTimeout(() => outgoing.classList.remove('is-on'), FADE);
       n++;
-    });
+    };
+
+    // decode first so the painting is ready the instant it fades up
+    const img = new Image();
+    img.src = w.thumb;
+    img.decode()
+      .then(show)
+      // decode() can reject even on a good image; fall back to the load state
+      .catch(() => { if (img.complete && img.naturalWidth) show(); });
   };
 
   // The bleed sits in its final position from the start, while the real

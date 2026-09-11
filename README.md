@@ -63,8 +63,12 @@ Contact address lives in the footer of `index.html` as a `mailto:` link.
 - **Everything degrades.** With JavaScript off you still get the full gallery,
   both themes, and every image — you just lose the lightbox and the masonry
   nesting.
-- **Motion respects `prefers-reduced-motion`.** Animations stop for anyone who
-  has asked their system to stop them.
+- **Motion respects `prefers-reduced-motion`.** Movement stops — travel, drift,
+  hover lifts, smooth scrolling — while plain fades stay, since opacity is not
+  what causes trouble. Worth knowing: **iOS reports this preference when Low
+  Power Mode is on**, not only when Reduce Motion is switched on. If the site
+  looks unusually still on a phone, check the battery setting before assuming
+  something broke.
 
 ## Left to do
 

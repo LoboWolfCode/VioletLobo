@@ -119,7 +119,9 @@ function initHeroBleed() {
   };
 
   step();
-  if (!calm.matches) setInterval(step, 8000);
+  // The crossfade is pure opacity and the pan is switched off in the stylesheet
+  // under reduced motion, so it can keep going — just more slowly.
+  setInterval(step, calm.matches ? 12000 : 8000);
 }
 
 initHeroBleed();
@@ -133,13 +135,29 @@ const topbar = $('#topbar');
 let lastY = window.scrollY;
 let ticking = false;
 
+/* How far there is to scroll. Measured here rather than inside the scroll
+   handler: scrollHeight is a layout-dependent read, and reading it on every
+   frame — right after the handler has just changed a class — forces the
+   browser to re-run layout sixty times a second while the finger is moving. */
+let scrollMax = 0;
+const measureScroll = () => {
+  scrollMax = document.documentElement.scrollHeight - window.innerHeight;
+};
+
+/* only touch the DOM when a value has actually changed */
+let wasStuck = null;
+let wasHidden = null;
+
 function onScroll() {
   const y = window.scrollY;
-  const max = document.documentElement.scrollHeight - window.innerHeight;
 
-  rail.style.setProperty('--progress', max > 0 ? (y / max).toFixed(4) : 0);
-  topbar.classList.toggle('is-stuck', y > 8);
-  topbar.classList.toggle('is-hidden', y > 320 && y > lastY && !lightbox.open);
+  rail.style.setProperty('--progress', scrollMax > 0 ? (y / scrollMax).toFixed(4) : 0);
+
+  const stuck = y > 8;
+  if (stuck !== wasStuck) topbar.classList.toggle('is-stuck', (wasStuck = stuck));
+
+  const hidden = y > 320 && y > lastY && !lightbox.open;
+  if (hidden !== wasHidden) topbar.classList.toggle('is-hidden', (wasHidden = hidden));
 
   lastY = y;
   ticking = false;
@@ -181,7 +199,12 @@ const gallery = $('#gallery');
 function layOutMasonry() {
   if (gallery.hidden) return;
 
-  const single = getComputedStyle(gallery).gridTemplateColumns.split(' ').length === 1;
+  // a single column needs no spans at all — plain block flow reads better
+  if (getComputedStyle(gallery).gridTemplateColumns.split(' ').length === 1) {
+    gallery.classList.remove('is-masonry');
+    figures.forEach(fig => { fig.style.gridRowEnd = ''; });
+    return;
+  }
 
   gallery.classList.add('is-masonry');
 
@@ -189,33 +212,42 @@ function layOutMasonry() {
   // unlike the clamp() sitting in the custom property
   const unit = parseFloat(getComputedStyle(gallery).gridAutoRows) || 8;
 
-  figures.forEach(fig => {
-    // measure at natural height, not the row-span height we last forced on it
-    fig.style.gridRowEnd = '';
-    const h = fig.getBoundingClientRect().height
-            + (parseFloat(getComputedStyle(fig).marginBlockEnd) || 0);
-    fig.style.gridRowEnd = `span ${Math.ceil(h / unit)}`;
-  });
+  // Clear, then measure, then write — three passes. Interleaving a write and a
+  // read per figure forced a fresh layout sixteen times over, long enough to
+  // stall scrolling on a phone.
+  figures.forEach(fig => { fig.style.gridRowEnd = ''; });
 
-  // a single column needs no spans at all — plain block flow reads better
-  if (single) {
-    gallery.classList.remove('is-masonry');
-    figures.forEach(fig => { fig.style.gridRowEnd = ''; });
-  }
+  const spans = figures.map(fig => Math.ceil(
+    (fig.getBoundingClientRect().height
+      + (parseFloat(getComputedStyle(fig).marginBlockEnd) || 0)) / unit));
+
+  figures.forEach((fig, i) => { fig.style.gridRowEnd = `span ${spans[i]}`; });
 }
 
 /* re-measure whenever anything that changes height settles */
+const settle = () => { layOutMasonry(); measureScroll(); };
+
 const relayout = (() => {
   let t;
-  return () => { clearTimeout(t); t = setTimeout(layOutMasonry, 60); };
+  return () => { clearTimeout(t); t = setTimeout(settle, 60); };
 })();
 
 $$('img', gallery).forEach(img => {
   if (!img.complete) img.addEventListener('load', relayout, { once: true });
 });
-addEventListener('resize', relayout);
-document.fonts?.ready.then(layOutMasonry);
-layOutMasonry();
+/* Phones fire `resize` every time the URL bar slides away, which is a height
+   change only. Relaying out the gallery mid-scroll was throwing the scroll
+   position to the top or bottom; width is all the masonry actually cares about. */
+let lastWidth = window.innerWidth;
+addEventListener('resize', () => {
+  measureScroll();                       // the viewport changed height at least
+  if (window.innerWidth === lastWidth) return;
+  lastWidth = window.innerWidth;
+  relayout();
+});
+
+document.fonts?.ready.then(settle);
+settle();
 
 
 /* ── grid ⇄ index view ──────────────────────────────────────────────────── */

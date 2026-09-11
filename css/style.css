@@ -36,7 +36,7 @@
   /* rhythm */
   --gutter: clamp(1.25rem, 5vw, 5.5rem);
   --shell:  1760px;
-  --sec-gap: clamp(6rem, 14vh, 11rem);
+  --sec-gap: clamp(6rem, 14svh, 11rem);
 
   /* motion */
   --ease:      cubic-bezier(.22, 1, .36, 1);
@@ -158,6 +158,8 @@ a { color: inherit; }
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
   animation: grain-shift 6s steps(6) infinite;
 }
+@media (hover: none) { .grain { animation: none; } }
+
 @keyframes grain-shift {
   0%   { transform: translate(0, 0); }
   20%  { transform: translate(-3%, 2%); }
@@ -333,7 +335,7 @@ a { color: inherit; }
     align-items: end;
   }
   .hero__eyebrow { grid-column: 1 / -1; }
-  .hero__side { padding-block-end: clamp(1rem, 4vh, 3rem); }
+  .hero__side { padding-block-end: clamp(1rem, 4svh, 3rem); }
   .hero__lede { margin-block-start: 0; }
 }
 
@@ -341,7 +343,7 @@ a { color: inherit; }
   display: flex;
   align-items: center;
   gap: .85rem;
-  margin: 0 0 clamp(1.25rem, 4vh, 2.5rem);
+  margin: 0 0 clamp(1.25rem, 4svh, 2.5rem);
   color: var(--fg-dim);
 }
 .hero__eyebrow i {
@@ -419,7 +421,7 @@ a { color: inherit; }
 
 .hero__lede {
   max-width: 34ch;
-  margin: clamp(1.75rem, 5vh, 3rem) 0 0;
+  margin: clamp(1.75rem, 5svh, 3rem) 0 0;
   font-size: clamp(1rem, .95rem + .35vw, 1.25rem);
   color: var(--fg-dim);
   line-height: 1.55;
@@ -429,7 +431,7 @@ a { color: inherit; }
   display: inline-flex;
   align-items: center;
   gap: .9rem;
-  margin-block-start: clamp(1.75rem, 4vh, 2.75rem);
+  margin-block-start: clamp(1.75rem, 4svh, 2.75rem);
   padding: .8rem 1.6rem .8rem 1.75rem;
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -459,7 +461,7 @@ a { color: inherit; }
 /* pinned to the floor of the hero so the name stays optically centred */
 .hero__foot {
   position: absolute;
-  inset-block-end: clamp(1.25rem, 3.5vh, 2.75rem);
+  inset-block-end: clamp(1.25rem, 3.5svh, 2.75rem);
   inset-inline: var(--gutter);
   display: flex;
   justify-content: space-between;
@@ -494,7 +496,7 @@ a { color: inherit; }
   grid-template-columns: 1fr;
   gap: clamp(1.5rem, 4vw, 3rem);
   align-items: end;
-  padding-block-end: clamp(2.5rem, 6vh, 4.5rem);
+  padding-block-end: clamp(2.5rem, 6svh, 4.5rem);
   border-bottom: 1px solid var(--line-soft);
 }
 @media (min-width: 860px) {
@@ -550,7 +552,7 @@ a { color: inherit; }
   grid-template-columns: 1fr;
   align-items: start;
   gap: var(--row-gap) var(--col-gap);
-  padding-block: clamp(2.5rem, 7vh, 5rem);
+  padding-block: clamp(2.5rem, 7svh, 5rem);
 }
 @media (min-width:  620px) { .gallery { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1120px) { .gallery { grid-template-columns: repeat(3, 1fr); } }
@@ -651,7 +653,7 @@ a { color: inherit; }
 .indexlist {
   list-style: none;
   margin: 0;
-  padding-block: clamp(1.5rem, 4vh, 3rem) clamp(2.5rem, 7vh, 5rem);
+  padding-block: clamp(1.5rem, 4svh, 3rem) clamp(2.5rem, 7svh, 5rem);
   counter-reset: idx;
 }
 .indexlist[hidden] { display: none; }
@@ -665,7 +667,7 @@ a { color: inherit; }
   align-items: baseline;
   gap: 1rem;
   width: 100%;
-  padding: clamp(1rem, 2.4vh, 1.6rem) 0;
+  padding: clamp(1rem, 2.4svh, 1.6rem) 0;
   border: 0;
   background: none;
   text-align: left;
@@ -733,7 +735,7 @@ a { color: inherit; }
 .about__grid {
   display: grid;
   gap: clamp(1.5rem, 4vw, 4rem);
-  padding-block-start: clamp(2.5rem, 6vh, 4rem);
+  padding-block-start: clamp(2.5rem, 6svh, 4rem);
   border-top: 1px solid var(--line-soft);
 }
 @media (min-width: 860px) { .about__grid { grid-template-columns: 10rem minmax(0, 62ch); } }
@@ -748,13 +750,13 @@ a { color: inherit; }
   font-size: clamp(2.75rem, 7vw, 4.5rem);
   line-height: 1;
   color: var(--accent);
-  margin: clamp(1.5rem, 4vh, 2.5rem) 0 0;
+  margin: clamp(1.5rem, 4svh, 2.5rem) 0 0;
   rotate: -3deg;
   transform-origin: 0 50%;
   opacity: .9;
 }
 
-.about__links { display: flex; flex-wrap: wrap; gap: .75rem; margin-block-start: clamp(2rem, 5vh, 3rem); }
+.about__links { display: flex; flex-wrap: wrap; gap: .75rem; margin-block-start: clamp(2rem, 5svh, 3rem); }
 .btn {
   display: inline-flex;
   align-items: center;
@@ -774,14 +776,14 @@ a { color: inherit; }
 .btn--ghost:hover { border-color: var(--accent); }
 
 .foot {
-  padding: clamp(3rem, 8vh, 6rem) var(--gutter) clamp(2rem, 5vh, 3rem);
+  padding: clamp(3rem, 8svh, 6rem) var(--gutter) clamp(2rem, 5svh, 3rem);
   border-top: 1px solid var(--line-soft);
   background: var(--ink-sink);
   overflow: hidden;
 }
 .foot__word {
   max-width: var(--shell);
-  margin: 0 auto clamp(2rem, 6vh, 4rem);
+  margin: 0 auto clamp(2rem, 6svh, 4rem);
   font-family: var(--serif);
   font-size: clamp(3rem, 15vw, 15rem);
   font-weight: 300;
@@ -855,7 +857,7 @@ a { color: inherit; }
 .lb__stage {
   position: relative;
   display: grid;
-  gap: clamp(1rem, 3vh, 1.75rem);
+  gap: clamp(1rem, 3svh, 1.75rem);
   justify-items: center;
   margin: 0;
   max-width: min(100%, 1400px);
@@ -933,7 +935,7 @@ a { color: inherit; }
 .lb__nav--next { right: clamp(.5rem, 2.5vw, 2rem); }
 
 @media (max-width: 700px) {
-  .lb__nav { top: auto; bottom: clamp(1rem, 4vh, 2rem); translate: 0; }
+  .lb__nav { top: auto; bottom: clamp(1rem, 4svh, 2rem); translate: 0; }
   .lb__nav--prev { left: 25%; }
   .lb__nav--next { right: 25%; }
   .lb__stage { padding-block-end: 4rem; }
@@ -965,14 +967,32 @@ a { color: inherit; }
 /* the layout toggle is script-driven; without it there is only the grid */
 html:not(.js-ready) .viewtoggle { display: none; }
 
-/* nothing should move for people who asked it not to */
+/* ── reduced motion ─────────────────────────────────────────────────────────
+   Travel goes; fades stay. What causes trouble is movement — things sliding,
+   scaling, drifting, or the page scrolling itself. A change in opacity is not
+   a motion trigger, and blanket-killing every transition made the site look
+   inert to anyone whose phone merely happens to be in Low Power Mode, which
+   iOS reports here exactly as if Reduce Motion were switched on. */
 @media (prefers-reduced-motion: reduce) {
+  /* the page must never scroll itself — this one is squarely a motion trigger */
   html { scroll-behavior: auto; }
-  *, *::before, *::after {
-    animation-duration: .01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: .01ms !important;
-  }
-  .js :is(.reveal, .work, .indexrow), .js .hero__title .line__in { opacity: 1; translate: 0 0; }
-  .grain { animation: none; }
+
+  /* reveals still fade, they just no longer travel to get there */
+  .js :is(.reveal, .work, .indexrow) { translate: 0 0; transition-duration: .4s; }
+  .js .hero__title .line__in { translate: 0 0; }
+
+  /* every ambient or hover movement, stopped */
+  .grain,
+  .hero__scroll i,
+  .hero__bleed.is-on { animation: none; }
+
+  .work__hit:hover .work__frame,
+  .work__hit:hover .work__frame img,
+  .tswitch:hover { transform: none; }
+
+  .btn:hover,
+  .cta:hover .cta__arrow { translate: 0; }
+
+  .indexrow button:hover { padding-inline: 0; }
+  .indexpeek { display: none; }
 }

@@ -18,12 +18,20 @@ Needs Pillow:  pip install pillow
 import html
 import json
 import sys
+from datetime import date
 from pathlib import Path
 
 try:
     from PIL import Image
 except ImportError:
     sys.exit("Pillow is missing. Install it with:  pip install pillow")
+
+SITE = "https://violetlobo.com"          # no trailing slash; change here only
+ARTIST = "Violet Lobo"
+SOCIAL = [
+    "https://www.instagram.com/violet._.lobo/",
+    "https://www.linkedin.com/in/violet-lobo-7a345a336",
+]
 
 ROOT = Path(__file__).resolve().parent.parent
 IMAGES = ROOT / "images"
@@ -32,6 +40,8 @@ PAGE = ROOT / "index.html"
 
 START = "<!-- gallery:start"
 END = "<!-- gallery:end -->"
+SEO_START = "<!-- seo:start"
+SEO_END = "<!-- seo:end -->"
 
 # (suffix, longest edge in px, quality)
 SIZES = (("thumb", 1000, 76), ("full", 2000, 82))
@@ -94,12 +104,16 @@ def figure(n, entry, im):
     eager = " loading=\"lazy\"" if n > 4 else ""
     priority = " fetchpriority=\"high\"" if n <= 2 else ""
 
+    # Google Images leans on alt text, and "All Eyes On Me" alone says nothing
+    # to someone who cannot see it — or to a crawler
+    alt = html.escape(f"{entry['title']} — artwork by {ARTIST}")
+
     return f'''        <figure class="work" style="--swatch: {dominant(im)}" data-index="{n - 1}"
                  data-full="images/opt/{stem}-full.webp" data-fw="{fw}" data-fh="{fh}"
                  data-title="{title}" data-caption="{caption}">
           <button class="work__hit" type="button" aria-label="Open &ldquo;{title}&rdquo; full size">
             <span class="work__frame">
-              <img src="images/opt/{stem}-thumb.webp" width="{tw}" height="{th}" alt="{title}"{eager} decoding="async"{priority}>
+              <img src="images/opt/{stem}-thumb.webp" width="{tw}" height="{th}" alt="{alt}"{eager} decoding="async"{priority}>
               <span class="work__zoom" aria-hidden="true">View</span>
             </span>
           </button>
@@ -111,6 +125,103 @@ def figure(n, entry, im):
             </span>
           </figcaption>
         </figure>'''
+
+
+def structured_data(works):
+    """schema.org description of who made this and what is on the page.
+
+    Search engines use it to tell that the site is one artist's body of work
+    rather than a shop or a blog, which is what earns the name a proper
+    result rather than a bare blue link.
+    """
+    person_id = f"{SITE}/#violet"
+
+    graph = [
+        {
+            "@type": "Person",
+            "@id": person_id,
+            "name": ARTIST,
+            "url": f"{SITE}/",
+            "jobTitle": ["Painter", "Animator", "Curator"],
+            "description": f"{ARTIST} is a painter, animator and curator working in "
+                           "acrylic, soft pastel, ink and digital.",
+            "image": f"{SITE}/images/social-card.jpg",
+            "sameAs": SOCIAL,
+        },
+        {
+            "@type": "WebSite",
+            "@id": f"{SITE}/#website",
+            "url": f"{SITE}/",
+            "name": ARTIST,
+            "inLanguage": "en",
+            "publisher": {"@id": person_id},
+        },
+        {
+            "@type": "CollectionPage",
+            "@id": f"{SITE}/#gallery",
+            "url": f"{SITE}/",
+            "name": "Selected Work",
+            "isPartOf": {"@id": f"{SITE}/#website"},
+            "about": {"@id": person_id},
+            "hasPart": [
+                {
+                    "@type": "VisualArtwork",
+                    "position": n,
+                    "name": entry["title"],
+                    "description": entry["caption"],
+                    "creator": {"@id": person_id},
+                    "image": f"{SITE}/images/opt/{Path(entry['image']).stem}-full.webp",
+                    "thumbnailUrl": f"{SITE}/images/opt/{Path(entry['image']).stem}-thumb.webp",
+                }
+                for n, entry in enumerate(works, 1)
+            ],
+        },
+    ]
+
+    payload = json.dumps({"@context": "https://schema.org", "@graph": graph},
+                         indent=2, ensure_ascii=False)
+    indented = "\n".join("  " + line for line in payload.splitlines())
+    return f'  <script type="application/ld+json">\n{indented}\n  </script>'
+
+
+def sitemap(works):
+    """A sitemap with image entries — the part that helps Google Images find art."""
+    def esc(t):
+        return html.escape(t, quote=False)
+
+    images = "\n".join(
+        f"""    <image:image>
+      <image:loc>{SITE}/images/opt/{Path(e['image']).stem}-full.webp</image:loc>
+      <image:title>{esc(e['title'])}</image:title>
+      <image:caption>{esc(e['caption'])}</image:caption>
+    </image:image>"""
+        for e in works
+    )
+
+    return f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>{SITE}/</loc>
+{images}
+    <lastmod>{date.today().isoformat()}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
+"""
+
+
+def replace_block(page, start, end, body, indent=""):
+    """Swap everything between two marker comments, keeping the markers."""
+    head, marker, rest = page.partition(start)
+    if not marker:
+        sys.exit(f"Could not find {start} in index.html.")
+    marker_line, _, rest = rest.partition("\n")
+    _, tail_marker, tail = rest.partition(indent + end)
+    if not tail_marker:
+        sys.exit(f"Could not find {end} in index.html.")
+    return head + start + marker_line + "\n" + body + "\n" + indent + end + tail
 
 
 def main():
@@ -127,21 +238,16 @@ def main():
         print(f"  {n:02d}  {entry['title']}" + (f"   (built {', '.join(made)})" if made else ""))
 
     page = PAGE.read_text(encoding="utf-8")
-    head, _, rest = page.partition(START)
-    _, _, tail = rest.partition("\n")
-    body, _, tail = tail.partition("        " + END)
-    if not tail:
-        sys.exit("Could not find the gallery markers in index.html.")
-
-    marker_line = START + rest.partition("\n")[0]
-    page = (head + marker_line + "\n"
-            + "\n\n".join(figures) + "\n"
-            + "        " + END + tail)
-
+    page = replace_block(page, START, END, "\n\n".join(figures), indent="        ")
+    page = replace_block(page, SEO_START, SEO_END, structured_data(works), indent="  ")
     PAGE.write_text(page, encoding="utf-8", newline="\n")
 
-    # keep the two hard-coded counts in the markup honest
-    print(f"\nWrote {len(works)} works into index.html.")
+    (ROOT / "sitemap.xml").write_text(sitemap(works), encoding="utf-8", newline="\n")
+
+    print(f"\nWrote {len(works)} works into index.html, plus structured data.")
+    print("Wrote sitemap.xml.")
+
+    # keep the hard-coded count in the markup honest
     if f"<b>{len(works)}</b> works" not in page:
         print(f"NOTE: the hero still says something other than {len(works)} works — "
               f"update the .hero__count line in index.html.")

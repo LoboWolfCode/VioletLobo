@@ -1,0 +1,9 @@
+# Everything here is meant to be found.
+User-agent: *
+Allow: /
+
+# Image crawlers explicitly welcome — the artwork is the point of the site.
+User-agent: Googlebot-Image
+Allow: /
+
+Sitemap: https://violetlobo.com/sitemap.xml

@@ -14,9 +14,12 @@ dkm.html          old email easter egg — no longer linked from the site,
 works.json        titles and captions for every piece  ← edit this
 css/style.css     all styling, dark and light themes
 js/main.js        theme, hero effect, masonry, index view, lightbox
-tools/build.py    regenerates the gallery from works.json
+tools/build.py    regenerates the gallery, structured data and sitemap
+robots.txt        tells crawlers everything is fair game
+sitemap.xml       generated — lists the page and all 16 artworks
 images/           original artwork (never touched by the build)
 images/opt/       generated WebP versions — do not edit by hand
+images/social-card.jpg   the link preview image (regenerate with tools/card.py)
 fonts/WhyMin.ttf  Violet's handwriting, used for the signature
 ```
 
@@ -52,6 +55,33 @@ If you change the number of pieces, update the `16 works` line in the hero too �
 the build prints a reminder when it notices.
 
 Contact address lives in the footer of `index.html` as a `mailto:` link.
+
+## Being found
+
+The site tells search engines who Violet is, not just what words are on the
+page. `tools/build.py` writes a schema.org block into `index.html` describing
+her as a Person (painter, animator, curator, with links to her Instagram and
+LinkedIn) and every artwork as a `VisualArtwork` credited to her. It also
+writes `sitemap.xml` with an image entry per piece, which is the part that gets
+the paintings into Google Images.
+
+**If the domain ever changes, edit `SITE` at the top of `tools/build.py` and
+re-run it**, then update the handful of absolute URLs in the `<head>` of
+`index.html` (canonical, `og:`, `twitter:`) and the `Sitemap:` line in
+`robots.txt`.
+
+Two things worth doing once, by hand:
+
+1. Add the site to [Google Search Console](https://search.google.com/search-console)
+   and submit `https://violetlobo.com/sitemap.xml`. Indexing is much faster than
+   waiting to be crawled.
+2. Put the violetlobo.com link in the Instagram and LinkedIn profiles. Those are
+   already declared as `sameAs` in the structured data, and the link back is what
+   makes search engines believe the connection.
+
+Link previews (iMessage, Slack, Instagram DMs, LinkedIn) use
+`images/social-card.jpg`. Regenerate it with `python tools/card.py` after
+changing which painting it features.
 
 ## Things worth knowing
 
